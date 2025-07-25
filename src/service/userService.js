@@ -68,7 +68,7 @@ const deleteUser=async(id)=>{
     }   
 }   
 const getUserUpdate=async(id)=>{
-    let userUpdate=[];
+    let userUpdate={};
     const connection = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
@@ -76,9 +76,8 @@ const getUserUpdate=async(id)=>{
         port: '3307', Promise: bluebird
     });
     try{
-    const [rows, fields] = await connection.execute('SELECT id,email,username FROM users where id=?',[id]);
-    console.log('row',rows);
-    userUpdate= rows;
+    const [rows, fields] = await connection.execute('SELECT * FROM users where id=?',[id]);
+    userUpdate= rows[0];
     }catch(err){     
     console.log(err)
     }  

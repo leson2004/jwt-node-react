@@ -30,7 +30,7 @@ const getUpdate=async(req,res)=>{
 
 }
 const handleUpdateUser =async(req,res)=>{
-    const id=req.params.id;
+    const id=req.body.id;
     const email =req.body.email;
     const username=req.body.username;
     await userService.updateUser(id,email,username);

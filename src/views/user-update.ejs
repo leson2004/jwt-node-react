@@ -12,19 +12,20 @@
 </head>
 <body>
     <div class="container">
-    <% userUpdate.forEach(function(item,index){ %>  
+    
           
-    <form method="POST" action="/users/update-user/<%= item.id %>">
+    <form method="POST" action="/users/update-user">
        
            <div class="col-6 containInput">
+                <input hidden name="id" value="<%= userUpdate.id %>"/> 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
-                    <input type="text" class="form-control" id="email" name="email" value='<%= item.email %>' >
+                    <input type="text" class="form-control" id="email" name="email" value='<%= userUpdate.email %>' >
                     
                 </div>
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" value='<%= item.username %>'>
+                    <input type="text" class="form-control" id="username" name="username" value='<%= userUpdate.username %>'>
                 </div>
                 
            </div>
@@ -32,7 +33,7 @@
             <button type="submit" class="btn btn-primary">Update</button>
         
     </form>
-    <% }) %>    
+      
 </div>
 </body>
 </html>
