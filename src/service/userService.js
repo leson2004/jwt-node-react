@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 const mysql = require('mysql2/promise');
 const bluebird = require('bluebird');
+import db from '../models/index';
+import { where } from "sequelize/lib/sequelize";
 
 
 const hashPassword=(userPassword)=>{
@@ -10,20 +12,11 @@ const hashPassword=(userPassword)=>{
 }
 const createNewUser=async(email,password,username)=>{
     const hashPass=hashPassword(password);
-     const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        database: 'jwt',
-        port: '3307', Promise: bluebird
-    });
-    connection.query('INSERT INTO user (email,password,username)VALUES (?,?,?)',[email,hashPass,username], 
-        (err, rows, fields) => {
-            if (err) throw err
-        }
-    )
+    const user = await db.User.create({email,hashPass,username}); 
+    return user;   
 }
 const getListUser=async()=>{
-    let user =[];
+    
     // connection.query('select * from user ', 
     //      (err, rows, fields) => {
     //         if(err){
@@ -34,63 +27,33 @@ const getListUser=async()=>{
     //         return user;
     //     }
     // )
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        database: 'jwt',
-        port: '3307', Promise: bluebird
-    });
-    try{
-    const [rows, fields] = await connection.execute('SELECT * FROM user');
-    user=rows;
-
-    }catch{
-        (err)=>{
-            console.log(err)
+    const user = await db.User.findAll(
+        { 
+            where: {id: 1,},
+            include: db.Group,
+            raw:true,
+            nest: true
         }
-    }
+    );
+    console.log('user........',user)
     return user;
 }
 const deleteUser=async(id)=>{
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        database: 'jwt',
-        port: '3307', Promise: bluebird
-    });
-    try{
-    const [rows, fields] = await connection.execute('DELETE FROM user where id=?',[id]);
-    return rows;
-    }catch{
-        (err)=>{
-            console.log(err)
-        }
-    }   
+   await db.User.destroy({
+  where: {id},
+})
 }   
 const getUserUpdate=async(id)=>{
     let userUpdate={};
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        database: 'jwt',
-        port: '3307', Promise: bluebird
-    });
-    try{
-    const [rows, fields] = await connection.execute('SELECT * FROM user where id=?',[id]);
-    userUpdate= rows[0];
-    }catch(err){     
-    console.log(err)
-    }  
+    const user=await db.User.findAll({ where: {
+    id: id,
+  }})
+    //console.log('user',user);
+    userUpdate=user[0].dataValues;// không nên dùng userUpdate=user[0].dataValues; bởi vì sau khi find sẽ trả về sequelize object (search : sequelize object to javascript ) 
     return userUpdate; 
 }
 const updateUser=async(id,email,username)=>{
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        database: 'jwt',
-        port: '3307', Promise: bluebird
-    });
-    await connection.execute("UPDATE user SET email = ?, username = ? WHERE id = ?",[email, username, id]);
+    await db.User.update({email,username},{where:{ id:id}})
 }
 module.exports={
     createNewUser,getListUser,deleteUser,getUserUpdate,updateUser

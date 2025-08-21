@@ -6,6 +6,7 @@ const handleHelloWorld=(req,res)=>{
 const handleUser=async(req,res)=>{
     
     const user =await userService.getListUser();
+    
    
     return res.render('user',{user});
 }
@@ -28,7 +29,7 @@ const getUpdate=async(req,res)=>{
     const userUpdate=await userService.getUserUpdate(req.params.id);
     return res.render('user-update',{userUpdate}); // khi truyền giá trị vào luôn nhớ {} thì mới nhận được 
 
-}
+}           
 const handleUpdateUser =async(req,res)=>{
     const id=req.body.id;
     const email =req.body.email;
