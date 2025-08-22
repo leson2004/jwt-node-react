@@ -38,8 +38,8 @@ const readFunc=async(req,res)=>{
 const createFunc=async(req,res)=>{
     try {
         //check req( kiểm tra dữ liệu đầu vào )
-        
-        const data= await createNewUser(req.body);
+        //console.log('req;',req.body);
+        const data= await userApiService.createNewUser(req.body.data);
         
             return res.status(200).json({
                 EM:data.EM,
@@ -48,7 +48,7 @@ const createFunc=async(req,res)=>{
             })
         
     } catch (error) {
-        console.log(e);
+        console.log(error);
         return res.status(500).json({
             EM:'error from sever ',
             EC:'-1',

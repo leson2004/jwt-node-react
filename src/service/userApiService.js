@@ -39,27 +39,27 @@ const getAllUser=async()=>{
 const createNewUser=async(data)=>{
     try {
         const checkEmail = await checkEmailExit(data.email);
-        if(!checkEmail){
+        if(checkEmail){
             return {
                 EM:'this email has exit',
-                EC:'1',
-                DT:''
+                EC:1,
+                DT:'email'
             }
         }
         const checkPhone=await checkPhoneExit(data.phone);
-        if(!checkPhone){
+        if(checkPhone){
             return {
                 EM:'this number phone has exit',
-                EC:'1',
-                DT:''
+                EC:1,
+                DT:'phone'
             }
         }
-        if(checkEmail===true&&checkPhone===true){
-            const hashPassword= await hashPassword(data.password);
-            await db.User.create({data});
+        if(checkEmail===false&&checkPhone===false){
+            const hashPass= await hashPassword(data.password);
+            await db.User.create({...data,hashPass});
             return {
                 EM:'creating new user is successful ',
-                EC:'0',
+                EC:0,
                 DT:''
             }
         }
@@ -67,7 +67,7 @@ const createNewUser=async(data)=>{
         console.log(error);
         return {
             EM:'something wrongs in service.... ',
-            EC:'-1',
+            EC:-1,
             DT:''
         }
     }
@@ -80,7 +80,7 @@ const updateUser=()=>{
          console.log(error);
         return {
             EM:'something wrongs in service.... ',
-            EC:'-1',
+            EC:-1,
             DT:''
         }
     }
