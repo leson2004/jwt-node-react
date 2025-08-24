@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 
 import db from '../models/index';
 import{checkEmailExit,hashPassword,checkPhoneExit} from './apiService'
+import { where } from "sequelize/lib/sequelize";
 
 
 
@@ -9,7 +10,7 @@ const getAllUser=async()=>{
    try {
     const user = await db.User.findAll({
             attributes: ['id','email', 'username', 'address','phone'],
-            include:{model:db.Group,attributes: ['name', 'description']},
+            include:{model:db.Group,attributes: ['id','name', 'description']},
 
     })
     if(user){
@@ -73,9 +74,36 @@ const createNewUser=async(data)=>{
     }
 }   
 
-const updateUser=()=>{
+const updateUser=async(data)=>{
     try {
-        
+        if(!data.groupId){
+            return{
+                EM:'groupId is not define',
+                EC:1,
+                DT:'groupId'
+            }
+        }
+        const user=await db.User.findOne({where:{id:data.id}});
+            if(user){
+                await user.update({ 
+                    username:data.username,
+                    address:data.address,
+                    sex:data.sex,
+                    phone:data.phone,
+                    groupId:data.groupId
+                })
+                return {
+                    EM:'user update successful ',
+                    EC:0,
+                    DT:[]
+                }
+            }else{
+                return{
+                    EM:'user is not define ',
+                    EC:0,
+                    DT:[]
+                }
+            }
     } catch (error) {
          console.log(error);
         return {
@@ -122,7 +150,7 @@ const getUserWithPagination=async(page,limit)=>{
         let offset= (page -1)*limit;
         const { count, rows }=await db.User.findAndCountAll({
             attributes: ['id','email', 'username', 'address','phone'],
-            include:{model:db.Group,attributes: ['name', 'description']},
+            include:{model:db.Group,attributes: ['name', 'description','id']},
             offset:offset,
             limit:limit
         })

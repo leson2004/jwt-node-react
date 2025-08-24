@@ -56,11 +56,16 @@ const createFunc=async(req,res)=>{
         })
     }
 }
-const editFunc=()=>{
+const editFunc=async(req,res)=>{
     try {
-        
+        const data = await userApiService.updateUser(req.body);
+        return res.status(200).json({
+            EM:data.EM,
+            EC:data.EC,
+            DT:data.DT
+        })
     } catch (error) {
-        console.log(e);
+        console.log(error);
         return res.status(500).json({
             EM:'error from sever ',
             EC:'-1',
